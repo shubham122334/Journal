@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: journalApp
+  data:
+    mongodb:
+      uri: mongodb+srv://mongodb:iimt123@cluster0.ovfnbfk.mongodb.net/?appName=Cluster0
+      database: journaltest
+      auto-index-creation: true
+
+
+
+
+
+
