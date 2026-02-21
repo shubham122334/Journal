@@ -6,6 +6,9 @@ spring:
       uri: mongodb+srv://mongodb:javaCode26@cluster0.whdlg2a.mongodb.net/?appName=Cluster0
       database: journaltest
       auto-index-creation: true
+  redis:
+    host: localhost
+    url: redis://default:m35Vq9JjqZ0MpGyCHJ4s5ePYAMsIThWV@redis-10475.c305.ap-south-1-1.ec2.cloud.redislabs.com:10475
 
   mail:
     host: smtp.gmail.com
