@@ -3,9 +3,25 @@ spring:
     name: journalApp
   data:
     mongodb:
-      uri: mongodb+srv://mongodb:iimt123@cluster0.ovfnbfk.mongodb.net/?appName=Cluster0
+      uri: mongodb+srv://mongodb:javaCode26@cluster0.whdlg2a.mongodb.net/?appName=Cluster0
       database: journaltest
       auto-index-creation: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: shubham1999.iimt@gmail.com
+    password: wgqgcevxrjaiwlri
+    Properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+app:
+  weather:
+    api:
+      key: ${Weather_API}
 
 
 

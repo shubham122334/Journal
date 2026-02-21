@@ -1,15 +1,16 @@
 package net.engineeringdigest.journalApp.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.engineeringdigest.journalApp.cache.AppCache;
 import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.services.UserService;
+import net.engineeringdigest.journalApp.services.WeatherService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 
 @RestController
@@ -17,12 +18,8 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-
-    @GetMapping
-    public ResponseEntity<List<User>> getAllEntries() {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
-
+    private final WeatherService weatherService;
+    public final AppCache appCache;
 
     @PutMapping
     public ResponseEntity<Void> updateUser(@RequestBody User user) {
@@ -36,6 +33,20 @@ public class UserController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("{city}")
+    public ResponseEntity<String> getUser(@PathVariable String city){
+        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+        String username=authentication.getName();
+        String message="Hi "+username+", weather feel like:"+weatherService.getApiResponse(city).getCurrent().getWeatherDescriptions();
+        return new ResponseEntity<>("Hi "+message, HttpStatus.OK);
+    }
+
+    @GetMapping("/clear-cache")
+    public ResponseEntity<Void> clearCache(){
+        appCache.initCache();
+        return ResponseEntity.ok().build();
     }
 
 

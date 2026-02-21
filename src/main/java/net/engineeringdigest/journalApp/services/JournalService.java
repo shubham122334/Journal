@@ -11,10 +11,7 @@ import net.engineeringdigest.journalApp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.OpenOption;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -32,7 +29,7 @@ public class JournalService {
                 throw new UserNotFoundException("User not found with username: "+user);
             }
             JournalEntry jE=journalRepository.save(entry);
-            u.getEntries().add(jE);
+            u.getJournalEntries().add(jE);
             userRepository.save(u);
         } catch (Exception e) {
             throw new JournalEntryNotFoundException(e.getMessage()," Something went wrong");
@@ -45,11 +42,11 @@ public class JournalService {
         if(user==null){
             throw new UserNotFoundException("User not found with username: "+username);
         }
-        JournalEntry entry = user.getEntries().stream()
+        JournalEntry entry = user.getJournalEntries().stream()
                 .filter(j->j.getId().equals(id)).findFirst()
                 .orElseThrow(() -> new JournalEntryNotFoundException("Journal entry not found or it does not belong to user: ",username));
 
-        boolean removed = user.getEntries()
+        boolean removed = user.getJournalEntries()
                 .removeIf(e -> e.getId().equals(id));
 
         if (!removed) {
@@ -61,7 +58,7 @@ public class JournalService {
 
     @Transactional
     public JournalEntry updateEntry(String id,JournalEntry entry,String username) {
-        List<JournalEntry> userJournalEntries=userRepository.findByUsername(username).getEntries();
+        List<JournalEntry> userJournalEntries=userRepository.findByUsername(username).getJournalEntries();
         JournalEntry jE=userJournalEntries.stream().filter(j -> j.getId()
                         .equals(id))
                 .findFirst()
@@ -77,7 +74,7 @@ public class JournalService {
         if(user==null){
             throw new UserNotFoundException("User not found with username: "+username);
         }
-        return user.getEntries();
+        return user.getJournalEntries();
     }
 
     @Transactional(readOnly = true)
@@ -86,7 +83,7 @@ public class JournalService {
         if(user==null){
             throw new UserException("User not found with username: "+username);
         }
-        return user.getEntries().stream().filter(j -> j.getId()
+        return user.getJournalEntries().stream().filter(j -> j.getId()
                 .equals(id))
                 .findFirst()
                 .orElseThrow(() -> new JournalEntryNotFoundException("Journal entry not found by id:" + id, " foe user:" + username));
