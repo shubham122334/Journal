@@ -7,7 +7,6 @@ import net.engineeringdigest.journalApp.entity.JournalEntry;
 import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.repository.UserRepositoryImpl;
 import net.engineeringdigest.journalApp.services.EmailService;
-import net.engineeringdigest.journalApp.services.SentimentAnalysis;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -21,24 +20,28 @@ public class MailScheduler {
 
     private final UserRepositoryImpl userRepository;
     private final EmailService emailService;
-    private final SentimentAnalysis sentimentAnalysis;
     private final AppCache appCache;
 
-   // @Scheduled(cron = "0 */1 * * * *")
+    //@Scheduled(cron = "0 */1 * * * *")
     public void fetchUserAndSendMail(){
 
         List<User> userList=userRepository.getUserForSA();
         for(User user:userList){
             List<JournalEntry> entries=user.getJournalEntries();
-            List<String> filtered=entries.stream().
+            List<JournalEntry> filtered=entries.stream().
                     filter(e->e.getCreatedDate().isAfter(LocalDateTime.now().minusDays(9)))
-                    .map(e->e.getContent())
                     .collect(Collectors.toList());
-            emailService.setMailMessage(user.getEmail(),"Journal App || Sentiment Analysis",
-                    "Hi "+user.getUsername()+"\n"+
-                    "\n"+ String.join("\n", filtered) +
-                            "\n\nLast 7-Days:"+sentimentAnalysis.getSentiment()+
-                            "\n\nRegards\nJournal App");
+
+            String journals=filtered.stream().map(JournalEntry::getContent)
+                    .collect(Collectors.joining("\n"));
+
+            String sentiments=filtered.stream().map(e->e.getSentiments().toString())
+                            .collect(Collectors.joining(","));
+
+            emailService.setMailMessage(user.getEmail(),"Journal | Sentiment Analysis",
+                    "Hi "+user.getUsername()+"\n\n"+journals+
+                            "\n\nLast 7-Days:["+sentiments+
+                            "]\n\nRegards\nJournal App");
         }
     }
 

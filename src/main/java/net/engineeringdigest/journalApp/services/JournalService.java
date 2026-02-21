@@ -2,6 +2,7 @@ package net.engineeringdigest.journalApp.services;
 
 import lombok.RequiredArgsConstructor;
 import net.engineeringdigest.journalApp.entity.JournalEntry;
+import net.engineeringdigest.journalApp.entity.Sentiments;
 import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.exception.JournalEntryNotFoundException;
 import net.engineeringdigest.journalApp.exception.UserException;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 @Service
@@ -28,9 +31,17 @@ public class JournalService {
             if(u==null){
                 throw new UserNotFoundException("User not found with username: "+user);
             }
+
+            if(u.isSentimentAnalysis()) {
+                Sentiments[] values = Sentiments.values();
+                entry.setSentiments(values[ThreadLocalRandom.current().nextInt(values.length)]);
+            }
+
             JournalEntry jE=journalRepository.save(entry);
             u.getJournalEntries().add(jE);
+
             userRepository.save(u);
+
         } catch (Exception e) {
             throw new JournalEntryNotFoundException(e.getMessage()," Something went wrong");
         }
