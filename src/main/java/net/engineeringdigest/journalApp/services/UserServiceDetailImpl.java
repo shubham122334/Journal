@@ -3,8 +3,6 @@ package net.engineeringdigest.journalApp.services;
 import lombok.RequiredArgsConstructor;
 import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.repository.UserRepository;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

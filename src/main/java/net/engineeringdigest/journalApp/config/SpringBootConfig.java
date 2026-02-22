@@ -1,6 +1,7 @@
 package net.engineeringdigest.journalApp.config;
 
 import lombok.RequiredArgsConstructor;
+import net.engineeringdigest.journalApp.filter.JwtProvider;
 import net.engineeringdigest.journalApp.services.UserServiceDetailImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +12,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -20,6 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SpringBootConfig {
 
     private final UserServiceDetailImpl userServiceDetail;
+    private final JwtProvider jwtProvider;
 
     @Bean
     public BCryptPasswordEncoder encoder(){
@@ -39,7 +44,8 @@ public class SpringBootConfig {
                 auth.antMatchers("/user/**","/journal/**").authenticated()
                         .antMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll())
-                .httpBasic(Customizer.withDefaults());
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.addFilterBefore(jwtProvider, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
