@@ -25,7 +25,6 @@ app:
   weather:
     api:
       key: ${Weather_API}
-  jwtSecret: "p+4hv+Y3Mnt8AE+o32wwf7YRS4OSGXBqMknbpcxKagk="
 
 
 
